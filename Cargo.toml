@@ -9,7 +9,5 @@ version = "0.1.0"
 edition = "2021"
 
 [dependencies]
-clap = { version = "4.3.23", features = ["cargo"] }
 serde = { version = "1.0.183", features = ["derive"] }
-stderrlog = "0.5.4"
 toml = "0.7.6"
