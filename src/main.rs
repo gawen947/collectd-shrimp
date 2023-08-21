@@ -1,11 +1,11 @@
-mod config;
-mod probe;
-mod probes;
-
 use std::path::PathBuf;
 use std::process::exit;
 use std::{thread, time};
 use std::io::{self, Write};
+
+mod config;
+mod probe;
+mod probes;
 
 fn main() {
     let config_path = match std::env::args().nth(1) {
