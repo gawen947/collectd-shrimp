@@ -16,23 +16,16 @@ impl Probe for ProbeSysctl {
             .iter()
             .map(|key| {
                 let ctl = sysctl::Ctl::new(key).unwrap_or_else(|_| {
-                    println!("error: cannot read sysctl key '{}'", key);
+                    println!("error: A cannot read sysctl key '{}'", key);
                     exit(1);
                 });
 
-                let ctl_value = ctl
-                    .value()
+                let val = ctl.value_string()
                     .unwrap_or_else(|_| {
-                        println!("error: cannot read sysctl key '{}'", key);
+                        println!("error: B cannot read sysctl key '{}'", key);
                         exit(1);
                     });
-
-                let val = ctl_value.as_string()
-                    .unwrap_or_else(|| {
-                        println!("error: cannot read sysctl key '{}'", key);
-                        exit(1)
-                    });
-
+                
                 ProbeResult {
                     time: now(),
                     name: key.to_owned(),
