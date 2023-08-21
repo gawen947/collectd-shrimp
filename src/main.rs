@@ -5,6 +5,7 @@ mod probes;
 use std::path::PathBuf;
 use std::process::exit;
 use std::{thread, time};
+use std::io::{self, Write};
 
 fn main() {
     let config_path = match std::env::args().nth(1) {
@@ -37,5 +38,7 @@ fn main() {
                                  &interval,
                                  probe_sysctl);
         }
+
+        io::stdout().flush().unwrap();
     }
 }
