@@ -9,5 +9,7 @@ version = "0.1.0"
 edition = "2021"
 
 [dependencies]
+gethostname = "0.4.3"
 serde = { version = "1.0.183", features = ["derive"] }
+sysctl = "0.5.4"
 toml = "0.7.6"

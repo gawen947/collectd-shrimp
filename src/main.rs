@@ -1,7 +1,9 @@
 mod config;
+mod probe;
+mod probes;
 
-use std::process::exit;
 use std::path::PathBuf;
+use std::process::exit;
 use std::{thread, time};
 
 fn main() {
@@ -16,17 +18,24 @@ fn main() {
             etc
         }
     };
-    let config = config::config(&config_path)
-        .unwrap_or_else(|_| {
-            println!("error: cannot load configuration file '{}'", config_path.display());
-            exit(1);
-        });
-
+    let config = config::config(&config_path).unwrap_or_else(|_| {
+        println!(
+            "error: cannot load configuration file '{}'",
+            config_path.display()
+        );
+        exit(1);
+    });
 
     let sleep_duration = time::Duration::from_secs(config.interval as u64);
+    let hostname = gethostname::gethostname().into_string().unwrap();
+    let interval = config.interval.to_string();
     loop {
         thread::sleep(sleep_duration);
 
-        println!("execute plugins");
+        if let Some(probe_sysctl) = &config.probe_sysctl {
+            probe::execute_probe(&hostname,
+                                 &interval,
+                                 probe_sysctl);
+        }
     }
 }
