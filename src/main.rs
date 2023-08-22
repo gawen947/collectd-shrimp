@@ -41,7 +41,7 @@ fn main() {
         }
     };
 
-    let sleep_duration = time::Duration::from_secs(interval.parse().unwrap_or_else(|_| {
+    let sleep_duration = time::Duration::from_secs_f64(interval.parse::<f64>().unwrap_or_else(|_| {
         println!("error: cannot parse COLLECTD_INTERVAL='{}' as an integer", interval);
         exit(1);
     }));
