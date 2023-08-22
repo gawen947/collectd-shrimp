@@ -28,7 +28,7 @@ pub fn execute_probe(hostname: &str, interval: &str, probe: &impl Probe) {
         let time = r.time.as_secs();
         let value = r.value.to_string();
 
-        println!("PUTVAL \"{hostname}/{plugin_name}/{name}\" interval={interval} {time}:{value}");
+        println!("PUTVAL {hostname}/{plugin_name}/{name} interval={interval} {time}:{value}");
     }
 }
 
