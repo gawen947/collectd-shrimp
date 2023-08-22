@@ -5,9 +5,6 @@ use std::path::PathBuf;
 
 #[derive(Debug, Deserialize)]
 pub struct Config {
-    /// Interval of time (in seconds) between executing the probes for sampling data.
-    pub interval: usize,
-
     pub probe_sysctl: Option<probes::sysctl::ProbeSysctl>,
 }
 

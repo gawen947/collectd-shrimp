@@ -2,16 +2,18 @@ use std::path::PathBuf;
 use std::process::exit;
 use std::{thread, time};
 use std::io::{self, Write};
+use std::env;
 
 mod config;
 mod probe;
 mod probes;
 
 fn main() {
-    let config_path = match std::env::args().nth(1) {
+    // find the config file according to the OS
+    let config_path = match env::args().nth(1) {
         Some(path) => PathBuf::from(path),
         None => {
-            let mut etc: PathBuf = match std::env::consts::OS {
+            let mut etc: PathBuf = match env::consts::OS {
                 "freebsd" => "/usr/local/etc".into(),
                 _ => "/etc".into(),
             };
@@ -19,6 +21,8 @@ fn main() {
             etc
         }
     };
+
+    // load/parse the config
     let config = config::config(&config_path).unwrap_or_else(|_| {
         println!(
             "error: cannot load configuration file '{}'",
@@ -27,18 +31,30 @@ fn main() {
         exit(1);
     });
 
-    let sleep_duration = time::Duration::from_secs(config.interval as u64);
-    let hostname = gethostname::gethostname().into_string().unwrap();
-    let interval = config.interval.to_string();
-    loop {
-        thread::sleep(sleep_duration);
+    // fetch expected env variables
+    let (hostname, interval) = match (env::var("COLLECTD_HOSTNAME"), env::var("COLLECTD_INTERVAL")) {
+        (Ok(hostname), Ok(interval)) => (hostname, interval),
+        _ => {
+            println!("error: cannot read env variable COLLECTD_HOSTNAME and COLLECTD_INTERVAL");
+            println!("error: these should be set either by collectd or by yourself if testing the probe");
+            exit(1);
+        }
+    };
 
+    let sleep_duration = time::Duration::from_secs(interval.parse().unwrap_or_else(|_| {
+        println!("error: cannot parse COLLECTD_INTERVAL='{}' as an integer", interval);
+        exit(1);
+    }));
+
+    loop {
         if let Some(probe_sysctl) = &config.probe_sysctl {
             probe::execute_probe(&hostname,
                                  &interval,
                                  probe_sysctl);
         }
 
+        // flush after executing all probes
         io::stdout().flush().unwrap();
+        thread::sleep(sleep_duration);
     }
 }
