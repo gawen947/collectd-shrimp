@@ -1,5 +1,5 @@
-use std::process::exit;
 use serde::Deserialize;
+use std::process::exit;
 
 use crate::config::PluginConfig;
 use crate::plugin;
@@ -22,13 +22,12 @@ impl plugin::PluginExecImplementation for Settings {
         for target in targets {
             results.push(plugin::PluginResult {
                 time: plugin::now(),
-                value: utils::sysctl::get_string(target)
-                    .unwrap_or_else(|_| {
-                        println!("error: cannot read sysctl key '{}'", target);
-                        exit(1);
-                    }),
+                value: utils::sysctl::get_string(target).unwrap_or_else(|_| {
+                    println!("error: cannot read sysctl key '{}'", target);
+                    exit(1);
+                }),
                 target: Some(target),
-                type_instance: None
+                type_instance: None,
             });
         }
 

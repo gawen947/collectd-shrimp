@@ -1,5 +1,4 @@
 use std::process::exit;
-use std::rc::Rc;
 use std::time;
 
 use crate::config::PluginConfig;
@@ -29,7 +28,7 @@ pub struct PluginResult<'a> {
     target reference because it means you have to create
     a new string on each execution.
     */
-    pub type_instance: Option<String>
+    pub type_instance: Option<String>,
 }
 
 /**
@@ -61,7 +60,9 @@ pub trait State {
 #[derive(Debug, Clone)]
 pub struct EmptyState {}
 impl State for EmptyState {
-    fn new() -> Self { Self {} }
+    fn new() -> Self {
+        Self {}
+    }
 }
 
 /**
@@ -116,7 +117,7 @@ where
             targets,
             instance,
             interval,
-            putval_base_str
+            putval_base_str,
         }
     }
 
@@ -148,17 +149,20 @@ pub trait ExecutablePlugin {
 
 impl<T, S> ExecutablePlugin for PluginInstance<T, S>
 where
-    T: PluginExecImplementation<PluginState=S> + ToOwned + Clone,
+    T: PluginExecImplementation<PluginState = S> + ToOwned + Clone,
     S: State + Clone,
 {
     fn exec(&mut self) {
-        for result in self.config.settings.exec(&self.config, &mut self.state, &self.targets) {
+        for result in self
+            .config
+            .settings
+            .exec(&self.config, &mut self.state, &self.targets)
+        {
             let time = result.time.as_secs().to_string();
 
             if let Some(type_instance) = result.type_instance {
                 self.putval(Some(&type_instance), &time, &result.value);
-            }
-            else {
+            } else {
                 self.putval(result.target, &time, &result.value);
             }
         }

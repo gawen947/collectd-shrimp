@@ -1,7 +1,7 @@
+use serde::Deserialize;
 use std::collections::HashMap;
 use std::error::Error;
 use std::path::PathBuf;
-use serde::Deserialize;
 
 use crate::plugins;
 
