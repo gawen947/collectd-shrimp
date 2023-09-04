@@ -62,4 +62,8 @@ impl plugin::PluginExecImplementation for Settings {
     fn name() -> &'static str {
         "sysctl"
     }
+
+    fn desc() -> &'static str {
+        "Read raw values from sysctl."
+    }
 }

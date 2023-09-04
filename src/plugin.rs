@@ -57,6 +57,9 @@ pub trait PluginExecImplementation: Sized {
 
     /// Specify the name of the plugin as used in the collectd identifier.
     fn name() -> &'static str;
+
+    /// A way for plugins to provide a description of themselves. Not really used for now but might be in the future.
+    fn desc() -> &'static str;
 }
 
 /// Each plugin/plugin-instance can have some state associated to it.
