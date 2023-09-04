@@ -44,7 +44,7 @@ pub trait PluginExecImplementation: Sized {
         instance: &str,
         conf: &PluginConfig<Self>,
         state: &mut Self::PluginState,
-        targets: &[String]
+        targets: &[String],
     );
 
     /// Execute an instance of the plugin and return the results for each type-instance.
@@ -81,7 +81,7 @@ along with references to the plugin configuration.
 */
 pub struct PluginInstance<T>
 where
-    T: PluginExecImplementation + ToOwned + Clone
+    T: PluginExecImplementation + ToOwned + Clone,
 {
     config: PluginConfig<T>,
     state: T::PluginState,
@@ -118,7 +118,7 @@ where
         let putval_base_str = format!("PUTVAL {hostname}/{plugin_name}-{instance}/{type_name}");
 
         let mut state = T::PluginState::new();
-        T::pre(&instance,&plugin_config, &mut state, &targets);
+        T::pre(&instance, &plugin_config, &mut state, &targets);
 
         Self {
             config: plugin_config,
@@ -162,8 +162,7 @@ where
     S: State + Clone,
 {
     fn exec(&mut self) {
-        for result in T::exec(&self.instance, &self.config, &mut self.state, &self.targets)
-        {
+        for result in T::exec(&self.instance, &self.config, &mut self.state, &self.targets) {
             let time = result.time.as_secs().to_string();
 
             if let Some(type_instance) = result.type_instance {
