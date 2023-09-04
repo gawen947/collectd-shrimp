@@ -6,7 +6,7 @@ use crate::plugins;
 Load all the plugins found in the configuration file
 and return them as a vector of executable instances.
 */
-pub fn load_plugins<'a>(
+pub fn load_plugins(
     config: Config,
     hostname: &str,
     interval: &str,

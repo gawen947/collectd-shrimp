@@ -56,17 +56,15 @@ fn main() {
         }));
 
     // from the configuration, we assemble a vector of plugin instance to execute
-    //let plugin_instances: Vec<Box<dyn plugin::ExecutablePlugin>>;
+    let mut plugin_instances = plugins_list::load_plugins(config, &hostname, &interval);
 
-    /*
     loop {
-        if let Some(probe_sysctl) = &config.probe_sysctl {
-            plugin::execute_probe(&hostname, &interval, probe_sysctl);
+        for plugin_instance in plugin_instances.iter_mut() {
+            plugin_instance.exec();
         }
 
         // flush after executing all plugins
         io::stdout().flush().unwrap();
         thread::sleep(sleep_duration);
     }
-    */
 }

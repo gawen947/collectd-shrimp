@@ -81,7 +81,6 @@ where
 
     targets: Vec<String>,
 
-    instance: String,
     interval: String,
     putval_base_str: String,
 }
@@ -115,7 +114,6 @@ where
             config: plugin_config,
             state: S::new().to_owned(),
             targets,
-            instance,
             interval,
             putval_base_str,
         }
