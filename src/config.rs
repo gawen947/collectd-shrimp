@@ -48,9 +48,9 @@ pub struct PluginConfig<T> {
 
     /**
     The individual settings for the plugin.
-    It can be either mandatory, optional or not required (None).
+    It is optional, but it is up to the plugin to check if the setting is missing or not.
     */
-    pub settings: T,
+    pub settings: Option<T>,
 }
 
 pub fn config(path: &PathBuf) -> Result<Config, Box<dyn Error>> {

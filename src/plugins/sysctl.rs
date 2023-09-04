@@ -12,7 +12,6 @@ impl plugin::PluginExecImplementation for Settings {
     type PluginState = plugin::EmptyState;
 
     fn exec<'a>(
-        &self,
         _conf: &PluginConfig<Self>,
         _state: &mut Self::PluginState,
         targets: &'a [String],
@@ -34,7 +33,7 @@ impl plugin::PluginExecImplementation for Settings {
         results
     }
 
-    fn name(&self) -> &'static str {
+    fn name() -> &'static str {
         "sysctl"
     }
 }

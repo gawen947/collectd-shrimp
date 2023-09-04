@@ -41,14 +41,13 @@ pub trait PluginExecImplementation: Sized {
 
     /// Execute an instance of the plugin and return the results for each type-instance.
     fn exec<'a>(
-        &self,
         conf: &PluginConfig<Self>,
         state: &mut Self::PluginState,
         targets: &'a [String],
     ) -> Vec<PluginResult<'a>>;
 
     /// Specify the name of the plugin as used in the collectd identifier.
-    fn name(&self) -> &'static str;
+    fn name() -> &'static str;
 }
 
 /// Each plugin/plugin-instance can have some state associated to it.
@@ -106,7 +105,7 @@ where
         }
 
         // we precompute some of the string that we shall print on each execution
-        let plugin_name = plugin_config.settings.name();
+        let plugin_name = T::name();
         let type_name = &plugin_config.r#type;
         let putval_base_str = format!("PUTVAL {hostname}/{plugin_name}-{instance}/{type_name}");
 
@@ -151,10 +150,7 @@ where
     S: State + Clone,
 {
     fn exec(&mut self) {
-        for result in self
-            .config
-            .settings
-            .exec(&self.config, &mut self.state, &self.targets)
+        for result in T::exec(&self.config, &mut self.state, &self.targets)
         {
             let time = result.time.as_secs().to_string();
 
