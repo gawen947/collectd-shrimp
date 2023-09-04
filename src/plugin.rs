@@ -39,8 +39,17 @@ coupled to the type of data you want to measure rather than the type of measurem
 pub trait PluginExecImplementation: Sized {
     type PluginState: State;
 
+    /// Executed before any execution to check the configuration and eventually initialize stuff.
+    fn pre(
+        instance: &str,
+        conf: &PluginConfig<Self>,
+        state: &mut Self::PluginState,
+        targets: &[String]
+    );
+
     /// Execute an instance of the plugin and return the results for each type-instance.
     fn exec<'a>(
+        instance: &str,
         conf: &PluginConfig<Self>,
         state: &mut Self::PluginState,
         targets: &'a [String],
@@ -70,24 +79,23 @@ Mostly stuff like string that could be pre-built once
 instead of being reassembled at each plugin execution,
 along with references to the plugin configuration.
 */
-pub struct PluginInstance<T, S>
+pub struct PluginInstance<T>
 where
-    T: PluginExecImplementation + ToOwned + Clone,
-    S: State,
+    T: PluginExecImplementation + ToOwned + Clone
 {
     config: PluginConfig<T>,
-    state: S,
+    state: T::PluginState,
 
     targets: Vec<String>,
 
+    instance: String,
     interval: String,
     putval_base_str: String,
 }
 
-impl<T, S> PluginInstance<T, S>
+impl<T> PluginInstance<T>
 where
     T: PluginExecImplementation + ToOwned + Clone,
-    S: State + Clone,
 {
     pub fn new(
         plugin_config: PluginConfig<T>,
@@ -109,10 +117,14 @@ where
         let type_name = &plugin_config.r#type;
         let putval_base_str = format!("PUTVAL {hostname}/{plugin_name}-{instance}/{type_name}");
 
+        let mut state = T::PluginState::new();
+        T::pre(&instance,&plugin_config, &mut state, &targets);
+
         Self {
             config: plugin_config,
-            state: S::new().to_owned(),
+            state,
             targets,
+            instance,
             interval,
             putval_base_str,
         }
@@ -144,13 +156,13 @@ pub trait ExecutablePlugin {
     fn exec(&mut self);
 }
 
-impl<T, S> ExecutablePlugin for PluginInstance<T, S>
+impl<T, S> ExecutablePlugin for PluginInstance<T>
 where
     T: PluginExecImplementation<PluginState = S> + ToOwned + Clone,
     S: State + Clone,
 {
     fn exec(&mut self) {
-        for result in T::exec(&self.config, &mut self.state, &self.targets)
+        for result in T::exec(&self.instance, &self.config, &mut self.state, &self.targets)
         {
             let time = result.time.as_secs().to_string();
 

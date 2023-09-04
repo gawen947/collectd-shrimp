@@ -11,7 +11,20 @@ pub struct Settings {}
 impl plugin::PluginExecImplementation for Settings {
     type PluginState = plugin::EmptyState;
 
+    fn pre(instance: &str, conf: &PluginConfig<Self>, _state: &mut Self::PluginState, targets: &[String]) {
+        if conf.settings.is_some() {
+            println!("warning: '{}:{}' plugin requires no setting", Self::name(), instance);
+            exit(1);
+        }
+
+        if targets.is_empty() {
+            println!("warning: no target specified for '{}:{}' plugin", Self::name(), instance);
+            exit(1);
+        }
+    }
+
     fn exec<'a>(
+        _instance: &str,
         _conf: &PluginConfig<Self>,
         _state: &mut Self::PluginState,
         targets: &'a [String],
