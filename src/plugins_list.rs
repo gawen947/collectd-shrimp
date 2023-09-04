@@ -1,3 +1,5 @@
+use std::process::exit;
+
 use crate::config::Config;
 use crate::plugin;
 use crate::plugins;
@@ -27,6 +29,11 @@ pub fn load_plugins(
 
             plugins.push(Box::new(plugin_instance));
         }
+    }
+
+    if plugins.is_empty() {
+        println!("warning: no plugin configured, exiting");
+        exit(1);
     }
 
     plugins
