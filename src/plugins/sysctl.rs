@@ -17,23 +17,8 @@ impl plugin::PluginExecImplementation for Settings {
         _state: &mut Self::PluginState,
         targets: &[String],
     ) {
-        if conf.settings.is_some() {
-            println!(
-                "warning: '{}:{}' plugin requires no setting",
-                Self::name(),
-                instance
-            );
-            exit(1);
-        }
-
-        if targets.is_empty() {
-            println!(
-                "warning: no target specified for '{}:{}' plugin",
-                Self::name(),
-                instance
-            );
-            exit(1);
-        }
+        conf.check_no_setting_required(instance);
+        conf.check_target_required(instance, targets);
     }
 
     fn exec<'a>(
@@ -47,7 +32,7 @@ impl plugin::PluginExecImplementation for Settings {
         for target in targets {
             results.push(plugin::PluginResult {
                 time: plugin::now(),
-                value: utils::sysctl::get_string(target).unwrap_or_else(|_| {
+                value: utils::sysctl::get(target).unwrap_or_else(|_| {
                     println!("error: cannot read sysctl key '{}'", target);
                     exit(1);
                 }),

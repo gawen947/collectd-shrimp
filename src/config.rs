@@ -2,7 +2,9 @@ use serde::Deserialize;
 use std::collections::HashMap;
 use std::error::Error;
 use std::path::PathBuf;
+use std::process::exit;
 
+use crate::plugin;
 use crate::plugins;
 
 type Plugin<T> = Option<HashMap<String, PluginConfig<T>>>;
@@ -16,6 +18,7 @@ plugin settings as value.
 #[derive(Debug, Deserialize)]
 pub struct Config {
     pub sysctl: Plugin<plugins::sysctl::Settings>,
+    pub sysctl_factor: Plugin<plugins::sysctl_factor::Settings>,
 }
 
 /**
@@ -51,6 +54,47 @@ pub struct PluginConfig<T> {
     It is optional, but it is up to the plugin to check if the setting is missing or not.
     */
     pub settings: Option<T>,
+}
+
+impl<T> PluginConfig<T>
+where
+    T: plugin::PluginExecImplementation,
+{
+    /// Check if there is some settings configured.
+    pub fn check_setting_required(&self, instance: &str) {
+        if self.settings.is_none() {
+            println!(
+                "warning: '{}:{}' plugin requires some setting(s)",
+                T::name(),
+                instance
+            );
+            exit(1);
+        }
+    }
+
+    /// Check if there is no setting configured.
+    pub fn check_no_setting_required(&self, instance: &str) {
+        if self.settings.is_some() {
+            println!(
+                "warning: '{}:{}' plugin requires no setting",
+                T::name(),
+                instance
+            );
+            exit(1);
+        }
+    }
+
+    /// Check if there are at least some target configured.
+    pub fn check_target_required(&self, instance: &str, targets: &[String]) {
+        if targets.is_empty() {
+            println!(
+                "warning: no target specified for '{}:{}' plugin",
+                T::name(),
+                instance
+            );
+            exit(1);
+        }
+    }
 }
 
 pub fn config(path: &PathBuf) -> Result<Config, Box<dyn Error>> {
