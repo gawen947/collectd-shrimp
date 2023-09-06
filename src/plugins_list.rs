@@ -47,6 +47,21 @@ pub fn load_plugins(
         }
     }
 
+    // sysctl temp
+    if let Some(plugin) = config.sysctl_temp {
+        for (instance_name, instance_config) in &plugin {
+            let plugin_instance: plugin::PluginInstance<plugins::sysctl_temp::Settings> =
+                plugin::PluginInstance::new(
+                    instance_config.to_owned(),
+                    hostname.to_owned(),
+                    instance_name.to_owned(),
+                    interval.to_owned(),
+                );
+
+            plugins.push(Box::new(plugin_instance));
+        }
+    }
+
     if plugins.is_empty() {
         println!("warning: no plugin configured");
         exit(1);

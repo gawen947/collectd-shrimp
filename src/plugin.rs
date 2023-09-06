@@ -37,7 +37,7 @@ The idea of a plugin is roughly the same as collectd, although it is slightly mo
 coupled to the type of data you want to measure rather than the type of measurement.
 */
 pub trait PluginExecImplementation: Sized {
-    type PluginState: State;
+    type PluginState: State<Self>;
 
     /// Executed before any execution to check the configuration and eventually initialize stuff.
     fn pre(
@@ -63,15 +63,15 @@ pub trait PluginExecImplementation: Sized {
 }
 
 /// Each plugin/plugin-instance can have some state associated to it.
-pub trait State {
-    fn new() -> Self;
+pub trait State<T> {
+    fn new(instance: &str, conf: &PluginConfig<T>, targets: &[String]) -> Self;
 }
 
 /// Useful for plugins that don't need any particular state.
 #[derive(Debug, Clone)]
 pub struct EmptyState {}
-impl State for EmptyState {
-    fn new() -> Self {
+impl<T> State<T> for EmptyState {
+    fn new(_instance: &str, _conf: &PluginConfig<T>, _targets: &[String]) -> Self {
         Self {}
     }
 }
@@ -120,7 +120,7 @@ where
         let type_name = &plugin_config.r#type;
         let putval_base_str = format!("PUTVAL {hostname}/{plugin_name}-{instance}/{type_name}");
 
-        let mut state = T::PluginState::new();
+        let mut state = T::PluginState::new(&instance, &plugin_config, &targets);
         T::pre(&instance, &plugin_config, &mut state, &targets);
 
         Self {
@@ -162,7 +162,7 @@ pub trait ExecutablePlugin {
 impl<T, S> ExecutablePlugin for PluginInstance<T>
 where
     T: PluginExecImplementation<PluginState = S> + ToOwned + Clone,
-    S: State + Clone,
+    S: State<T> + Clone,
 {
     fn exec(&mut self) {
         for result in T::exec(&self.instance, &self.config, &mut self.state, &self.targets) {

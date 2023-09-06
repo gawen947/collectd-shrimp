@@ -33,7 +33,7 @@ impl plugin::PluginExecImplementation for Settings {
         let factor = conf.settings.as_ref().unwrap().factor;
 
         for target in targets {
-            let raw = utils::sysctl::get(target).unwrap_or_else(|_| {
+            let raw = utils::sysctl::get_string(target).unwrap_or_else(|_| {
                 println!("error: cannot read sysctl key '{}'", target);
                 exit(1);
             });

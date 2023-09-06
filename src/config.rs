@@ -19,6 +19,7 @@ plugin settings as value.
 pub struct Config {
     pub sysctl: Plugin<plugins::sysctl::Settings>,
     pub sysctl_factor: Plugin<plugins::sysctl_factor::Settings>,
+    pub sysctl_temp: Plugin<plugins::sysctl_temp::Settings>,
 }
 
 /**
