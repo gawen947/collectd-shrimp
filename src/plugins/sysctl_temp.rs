@@ -15,12 +15,14 @@ pub enum TemperatureScale {
 #[derive(Debug, Clone, Deserialize)]
 pub struct Settings {
     pub scale: Option<TemperatureScale>,
+    pub precision: Option<usize>,
 }
 
 #[derive(Debug, Clone)]
 pub struct State {
     pub scale: TemperatureScale,
     pub scale_fn: fn(&sysctl::Temperature) -> f32,
+    pub format_fn: fn(f32) -> String,
 }
 
 impl plugin::State<Settings> for State {
@@ -42,7 +44,36 @@ impl plugin::State<Settings> for State {
             TemperatureScale::Fahrenheit => sysctl::Temperature::fahrenheit,
         };
 
-        Self { scale, scale_fn }
+        /*
+        Originally this code used a boxed closure.
+        But it is probably slightly more performant and
+        also more simple to use function pointers instead.
+        */
+        let format_fn = if let Some(settings) = &conf.settings {
+            if let Some(precision) = &settings.precision {
+                match precision {
+                    0 => |v| format!("{:.0}", v),
+                    1 => |v| format!("{:.1}", v),
+                    2 => |v| format!("{:.2}", v),
+                    3 => |v| format!("{:.3}", v),
+                    4 => |v| format!("{:.4}", v),
+                    5 => |v| format!("{:.5}", v),
+                    6 => |v| format!("{:.6}", v),
+                    7 => |v| format!("{:.7}", v),
+                    _ => |v| format!("{:.8}", v),
+                }
+            } else {
+                |v: f32| v.to_string()
+            }
+        } else {
+            |v: f32| v.to_string()
+        };
+
+        Self {
+            scale,
+            scale_fn,
+            format_fn,
+        }
     }
 }
 
@@ -83,7 +114,7 @@ impl plugin::PluginExecImplementation for Settings {
 
             results.push(plugin::PluginResult {
                 time: plugin::now(),
-                value: temp_value.to_string(),
+                value: (state.format_fn)(temp_value),
                 target: Some(target),
                 type_instance: None,
             });
