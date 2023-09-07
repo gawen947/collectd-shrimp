@@ -86,7 +86,6 @@ impl plugin::PluginExecImplementation for Settings {
         _state: &mut Self::PluginState,
         targets: &[String],
     ) {
-        conf.check_no_setting_required(instance);
         conf.check_target_required(instance, targets);
     }
 
