@@ -17,7 +17,7 @@ pub fn load_plugins(
 
     // FIXME: refactor that with macros
 
-    // sysctl
+    #[cfg(feature = "sysctl")]
     if let Some(plugin) = config.sysctl {
         for (instance_name, instance_config) in &plugin {
             let plugin_instance: plugin::PluginInstance<plugins::sysctl::Settings> =
@@ -32,7 +32,7 @@ pub fn load_plugins(
         }
     }
 
-    // sysctl_factor
+    #[cfg(feature = "sysctl_factor")]
     if let Some(plugin) = config.sysctl_factor {
         for (instance_name, instance_config) in &plugin {
             let plugin_instance: plugin::PluginInstance<plugins::sysctl_factor::Settings> =
@@ -47,7 +47,7 @@ pub fn load_plugins(
         }
     }
 
-    // sysctl temp
+    #[cfg(feature = "sysctl_temp")]
     if let Some(plugin) = config.sysctl_temp {
         for (instance_name, instance_config) in &plugin {
             let plugin_instance: plugin::PluginInstance<plugins::sysctl_temp::Settings> =

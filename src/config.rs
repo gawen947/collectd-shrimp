@@ -17,8 +17,13 @@ plugin settings as value.
 */
 #[derive(Debug, Deserialize)]
 pub struct Config {
+    #[cfg(feature = "sysctl")]
     pub sysctl: Plugin<plugins::sysctl::Settings>,
+
+    #[cfg(feature = "sysctl_factor")]
     pub sysctl_factor: Plugin<plugins::sysctl_factor::Settings>,
+
+    #[cfg(feature = "sysctl_temp")]
     pub sysctl_temp: Plugin<plugins::sysctl_temp::Settings>,
 }
 

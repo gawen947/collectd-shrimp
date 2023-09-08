@@ -10,5 +10,10 @@ edition = "2021"
 
 [dependencies]
 serde = { version = "1.0.183", features = ["derive"] }
-sysctl = "0.5.4"
+sysctl = { version = "0.5.4", optional = true }
 toml = "0.7.6"
+
+[features]
+sysctl = ["dep:sysctl"]
+sysctl_factor = ["sysctl"]
+sysctl_temp = ["sysctl"]
