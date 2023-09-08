@@ -17,3 +17,4 @@ toml = "0.7.6"
 sysctl = ["dep:sysctl"]
 sysctl_factor = ["sysctl"]
 sysctl_temp = ["sysctl"]
+all = ["sysctl", "sysctl_factor", "sysctl_temp"]
