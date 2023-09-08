@@ -17,6 +17,21 @@ pub fn load_plugins(
 
     // FIXME: refactor that with macros
 
+    // null plugin
+    if let Some(plugin) = config.null {
+        for (instance_name, instance_config) in &plugin {
+            let plugin_instance: plugin::PluginInstance<plugins::null::Settings> =
+                plugin::PluginInstance::new(
+                    instance_config.to_owned(),
+                    hostname.to_owned(),
+                    instance_name.to_owned(),
+                    interval.to_owned(),
+                );
+
+            plugins.push(Box::new(plugin_instance));
+        }
+    }
+
     #[cfg(feature = "sysctl")]
     if let Some(plugin) = config.sysctl {
         for (instance_name, instance_config) in &plugin {

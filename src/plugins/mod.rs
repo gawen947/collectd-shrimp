@@ -1,3 +1,5 @@
+pub mod null;
+
 #[cfg(feature = "sysctl")]
 pub mod sysctl;
 

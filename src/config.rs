@@ -17,6 +17,8 @@ plugin settings as value.
 */
 #[derive(Debug, Deserialize)]
 pub struct Config {
+    pub null: Plugin<plugins::null::Settings>,
+
     #[cfg(feature = "sysctl")]
     pub sysctl: Plugin<plugins::sysctl::Settings>,
 
@@ -67,6 +69,7 @@ where
     T: plugin::PluginExecImplementation,
 {
     /// Check if there is some settings configured.
+    #[allow(dead_code)]
     pub fn check_setting_required(&self, instance: &str) {
         if self.settings.is_none() {
             println!(
@@ -91,10 +94,23 @@ where
     }
 
     /// Check if there are at least some target configured.
+    #[allow(dead_code)]
     pub fn check_target_required(&self, instance: &str, targets: &[String]) {
         if targets.is_empty() {
             println!(
                 "warning: no target specified for '{}:{}' plugin",
+                T::name(),
+                instance
+            );
+            exit(1);
+        }
+    }
+
+    /// Check if there is no target configured.
+    pub fn check_no_target_required(&self, instance: &str, targets: &[String]) {
+        if !targets.is_empty() {
+            println!(
+                "warning: '{}:{}' plugin requires no target",
                 T::name(),
                 instance
             );
