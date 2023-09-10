@@ -62,7 +62,7 @@ pub fn load_plugins(
         }
     }
 
-    #[cfg(feature = "sysctl_temp")]
+    #[cfg(all(target_os = "freebsd", feature = "sysctl_temp"))]
     if let Some(plugin) = config.sysctl_temp {
         for (instance_name, instance_config) in &plugin {
             let plugin_instance: plugin::PluginInstance<plugins::sysctl_temp::Settings> =

@@ -5,7 +5,7 @@ readme = "README.md"
 authors = ["David Hauweele <david@hauweele.net>"]
 license = "BSD-3-Clause"
 repository = "https://github.com/gawen947/collectd-shrimp.git"
-version = "0.1.4"
+version = "0.1.5"
 edition = "2021"
 
 [dependencies]
@@ -17,4 +17,3 @@ toml = "0.7.6"
 sysctl = ["dep:sysctl"]
 sysctl_factor = ["sysctl"]
 sysctl_temp = ["sysctl"]
-all = ["sysctl", "sysctl_factor", "sysctl_temp"]

@@ -6,5 +6,5 @@ pub mod sysctl;
 #[cfg(feature = "sysctl_factor")]
 pub mod sysctl_factor;
 
-#[cfg(feature = "sysctl_temp")]
+#[cfg(all(target_os = "freebsd", feature = "sysctl_temp"))]
 pub mod sysctl_temp;

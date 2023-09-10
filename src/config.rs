@@ -25,7 +25,7 @@ pub struct Config {
     #[cfg(feature = "sysctl_factor")]
     pub sysctl_factor: Plugin<plugins::sysctl_factor::Settings>,
 
-    #[cfg(feature = "sysctl_temp")]
+    #[cfg(all(target_os = "freebsd", feature = "sysctl_temp"))]
     pub sysctl_temp: Plugin<plugins::sysctl_temp::Settings>,
 }
 
