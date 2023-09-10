@@ -141,7 +141,7 @@ where
         // FIXME: we should probably abstract that away with a macro
         match type_instance {
             Some(type_instance) => {
-                println!("{putval_base_str}-{type_instance} interval={interval_str} {time}:{value}")
+                println!("{putval_base_str}-\"{type_instance}\" interval={interval_str} {time}:{value}")
             }
             None => println!("{putval_base_str} interval={interval_str} {time}:{value}"),
         };
