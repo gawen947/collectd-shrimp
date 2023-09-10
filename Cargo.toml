@@ -5,7 +5,7 @@ readme = "README.md"
 authors = ["David Hauweele <david@hauweele.net>"]
 license = "BSD-3-Clause"
 repository = "https://github.com/gawen947/collectd-shrimp.git"
-version = "0.1.6"
+version = "0.1.7"
 edition = "2021"
 
 [dependencies]
