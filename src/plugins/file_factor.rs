@@ -36,7 +36,7 @@ impl plugin::PluginExecImplementation for Settings {
                 println!("error: cannot file '{}'", target);
                 exit(1);
             });
-            let raw_int: i64 = raw.parse().unwrap_or_else(|_| {
+            let raw_int: i64 = raw.trim().parse().unwrap_or_else(|_| {
                 println!("error: cannot parse raw value '{}' as integer", raw);
                 exit(1);
             });

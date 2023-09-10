@@ -34,7 +34,7 @@ impl plugin::PluginExecImplementation for Settings {
                 value: std::fs::read_to_string(target).unwrap_or_else(|_| {
                     println!("error: cannot read file '{}'", target);
                     exit(1);
-                }),
+                }).trim().to_owned(),
                 target: Some(target),
                 type_instance: None,
             });
