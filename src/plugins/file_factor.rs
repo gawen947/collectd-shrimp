@@ -3,7 +3,6 @@ use std::process::exit;
 
 use crate::config::PluginConfig;
 use crate::plugin;
-use crate::utils;
 
 #[derive(Debug, Clone, Deserialize)]
 pub struct Settings {
@@ -33,12 +32,12 @@ impl plugin::PluginExecImplementation for Settings {
         let factor = conf.settings.as_ref().unwrap().factor;
 
         for target in targets {
-            let raw = utils::sysctl::get_string(target).unwrap_or_else(|_| {
-                println!("error: cannot read sysctl key '{}'", target);
+            let raw = std::fs::read_to_string(target).unwrap_or_else(|_| {
+                println!("error: cannot file '{}'", target);
                 exit(1);
             });
             let raw_int: i64 = raw.parse().unwrap_or_else(|_| {
-                println!("error: cannot parse sysctl key '{}' as integer", raw);
+                println!("error: cannot parse raw value '{}' as integer", raw);
                 exit(1);
             });
             let result = (raw_int as f64) * factor;
@@ -55,18 +54,15 @@ impl plugin::PluginExecImplementation for Settings {
     }
 
     fn name() -> &'static str {
-        "sysctl_factor"
+        "file_factor"
     }
 
     fn desc() -> &'static str {
         "
-        Read a integer value from sysctl to which an optional factor can be applied.
-        For instance, say you have a sysctl for temperature given in m°C, where a value
-        of 32128 would correspond to a temperature of 32.128°C. Then you can use this
-        plugin with a factor of 0.001.
-
-        Another example, suppose you have a sysctl that gives the number of memory pages.
-        You can use a factor of 4096 (page size) to get amount of memory in bytes.
+        Read a integer value from a file to which an optional factor can be applied.\
+        For instance, say you have a file in /sys that reports a temperature given in m°C,
+        where a value of 32128 would correspond to a temperature of 32.128°C. Then you can
+        use this plugin with a factor of 0.001.
         "
     }
 }
