@@ -69,11 +69,7 @@ impl plugin::State<Settings> for State {
             |v: f32| v.to_string()
         };
 
-        Self {
-            scale,
-            scale_fn,
-            format_fn,
-        }
+        Self { scale, scale_fn, format_fn }
     }
 }
 
