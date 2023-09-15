@@ -116,7 +116,7 @@ where
         }
 
         // we precompute some of the string that we shall print on each execution
-        let plugin_name = T::name();
+        let plugin_name = if let Some(name) = &plugin_config.name { name } else { T::name() };
         let type_name = &plugin_config.r#type;
         let putval_base_str = format!("PUTVAL {hostname}/{plugin_name}-{instance}/{type_name}");
 

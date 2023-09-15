@@ -50,6 +50,15 @@ pub struct PluginConfig<T> {
     pub r#type: String,
 
     /**
+    Optionally change the name of the plugin.
+    For instance if you have a set of plugins that work together
+    to report temperature from various systems, you might want to
+    call them "temperature" instead of "sysctl_temp", "sysctl"
+    and "file_factor".
+    */
+    pub name: Option<String>,
+
+    /**
     The targets for the instance (if required by the plugin).
     If there is only one target, you could use "target" instead.
     If there is more than one target, if will be used as the "type" instance
