@@ -59,6 +59,14 @@ pub struct PluginConfig<T> {
     pub name: Option<String>,
 
     /**
+    Optionally change the interval for this plugin instance.
+    This must be greater than the interval provided by collectd.
+    Each time the plugin is executed, it checks if the last execution
+    is older than the custom configured interval and skip execution otherwise.
+    */
+    pub interval: Option<f32>,
+
+    /**
     The targets for the instance (if required by the plugin).
     If there is only one target, you could use "target" instead.
     If there is more than one target, if will be used as the "type" instance

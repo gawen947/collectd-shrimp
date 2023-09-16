@@ -88,11 +88,13 @@ where
 {
     config: PluginConfig<T>,
     state: T::PluginState,
-
     targets: Vec<String>,
-
     instance: String,
-    interval: String,
+
+    interval_str: String,
+    interval_duration: Option<time::Duration>,
+    last: time::Instant,
+
     putval_base_str: String,
 }
 
@@ -115,6 +117,15 @@ where
             targets.push(plugin_config.target.to_owned().unwrap());
         }
 
+        let (interval_duration, interval_str) = if let Some(interval) = plugin_config.interval {
+            (
+                Some(time::Duration::from_secs_f32(interval)),
+                interval.to_string(),
+            )
+        } else {
+            (None, interval)
+        };
+
         // we precompute some of the string that we shall print on each execution
         let plugin_name = if let Some(name) = &plugin_config.name { name } else { T::name() };
         let type_name = &plugin_config.r#type;
@@ -128,15 +139,17 @@ where
             state,
             targets,
             instance,
-            interval,
+            interval_duration,
+            interval_str,
             putval_base_str,
+            last: time::Instant::now(),
         }
     }
 
     /// Echo the putval command to stdout.
     fn putval(&self, type_instance: Option<&str>, time: &str, value: &str) {
         let putval_base_str = &self.putval_base_str;
-        let interval_str = &self.interval;
+        let interval_str = &self.interval_str;
 
         // FIXME: we should probably abstract that away with a macro
         match type_instance {
@@ -167,6 +180,13 @@ where
     S: State<T> + Clone,
 {
     fn exec(&mut self) {
+        if let Some(interval) = self.interval_duration {
+            if self.last.elapsed() < interval {
+                return;
+            }
+            self.last = time::Instant::now();
+        }
+
         for result in T::exec(&self.instance, &self.config, &mut self.state, &self.targets) {
             let time = result.time.as_secs().to_string();
 
