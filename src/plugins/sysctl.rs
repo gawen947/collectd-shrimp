@@ -33,7 +33,7 @@ impl plugin::PluginExecImplementation for Settings {
             results.push(plugin::PluginResult {
                 time: plugin::now(),
                 value: utils::sysctl::get_string(target).unwrap_or_else(|_| {
-                    println!("error: cannot read sysctl key '{}'", target);
+                    eprintln!("error: cannot read sysctl key '{}'", target);
                     exit(1);
                 }),
                 target: Some(target),

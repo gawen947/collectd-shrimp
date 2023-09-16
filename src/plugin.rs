@@ -203,7 +203,7 @@ pub fn now() -> time::Duration {
     time::SystemTime::now()
         .duration_since(time::SystemTime::UNIX_EPOCH)
         .unwrap_or_else(|_| {
-            println!("error: howdy fellow time traveler!");
+            eprintln!("error: howdy fellow time traveler!");
             exit(1);
         })
 }

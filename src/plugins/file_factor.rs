@@ -33,11 +33,11 @@ impl plugin::PluginExecImplementation for Settings {
 
         for target in targets {
             let raw = std::fs::read_to_string(target).unwrap_or_else(|_| {
-                println!("error: cannot file '{}'", target);
+                eprintln!("error: cannot file '{}'", target);
                 exit(1);
             });
             let raw_int: i64 = raw.trim().parse().unwrap_or_else(|_| {
-                println!("error: cannot parse raw value '{}' as integer", raw);
+                eprintln!("error: cannot parse raw value '{}' as integer", raw);
                 exit(1);
             });
             let result = (raw_int as f64) * factor;

@@ -33,7 +33,7 @@ impl plugin::PluginExecImplementation for Settings {
                 time: plugin::now(),
                 value: std::fs::read_to_string(target)
                     .unwrap_or_else(|_| {
-                        println!("error: cannot read file '{}'", target);
+                        eprintln!("error: cannot read file '{}'", target);
                         exit(1);
                     })
                     .trim()

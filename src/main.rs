@@ -26,7 +26,7 @@ fn main() {
 
     // load/parse the config
     let config = config::config(&config_path).unwrap_or_else(|e| {
-        println!(
+        eprintln!(
             "error: cannot load configuration file '{}': {}",
             config_path.display(),
             e
@@ -39,9 +39,9 @@ fn main() {
     {
         (Ok(hostname), Ok(interval)) => (hostname, interval),
         _ => {
-            println!("error: cannot read env variable COLLECTD_HOSTNAME and COLLECTD_INTERVAL");
-            println!(
-                "error: these should be set either by collectd or by yourself if testing the probe"
+            eprintln!("
+            error: cannot read env variable COLLECTD_HOSTNAME and COLLECTD_INTERVAL
+                   these should be set either by collectd or by yourself if testing the probe"
             );
             exit(1);
         }
@@ -49,7 +49,7 @@ fn main() {
 
     let sleep_duration =
         time::Duration::from_secs_f64(interval.parse::<f64>().unwrap_or_else(|_| {
-            println!(
+            eprintln!(
                 "error: cannot parse COLLECTD_INTERVAL='{}' as an integer",
                 interval
             );

@@ -108,7 +108,7 @@ pub fn load_plugins(
     }
 
     if plugins.is_empty() {
-        println!("warning: no plugin configured");
+        eprintln!("warning: no plugin configured");
         exit(1);
     }
 

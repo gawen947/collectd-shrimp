@@ -95,11 +95,11 @@ impl plugin::PluginExecImplementation for Settings {
 
         for target in targets {
             let raw = utils::sysctl::get(target).unwrap_or_else(|_| {
-                println!("error: cannot read sysctl key '{}'", target);
+                eprintln!("error: cannot read sysctl key '{}'", target);
                 exit(1);
             });
             let temp = raw.as_temperature().unwrap_or_else(|| {
-                println!(
+                eprintln!(
                     "error: cannot parse key '{}' with value '{}' as a temperature",
                     target, raw
                 );

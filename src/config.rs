@@ -95,7 +95,7 @@ where
     #[allow(dead_code)]
     pub fn check_setting_required(&self, instance: &str) {
         if self.settings.is_none() {
-            println!(
+            eprintln!(
                 "warning: '{}:{}' plugin requires some setting(s)",
                 T::name(),
                 instance
@@ -107,7 +107,7 @@ where
     /// Check if there is no setting configured.
     pub fn check_no_setting_required(&self, instance: &str) {
         if self.settings.is_some() {
-            println!(
+            eprintln!(
                 "warning: '{}:{}' plugin requires no setting",
                 T::name(),
                 instance
@@ -120,7 +120,7 @@ where
     #[allow(dead_code)]
     pub fn check_target_required(&self, instance: &str, targets: &[String]) {
         if targets.is_empty() {
-            println!(
+            eprintln!(
                 "warning: no target specified for '{}:{}' plugin",
                 T::name(),
                 instance
@@ -132,7 +132,7 @@ where
     /// Check if there is no target configured.
     pub fn check_no_target_required(&self, instance: &str, targets: &[String]) {
         if !targets.is_empty() {
-            println!(
+            eprintln!(
                 "warning: '{}:{}' plugin requires no target",
                 T::name(),
                 instance

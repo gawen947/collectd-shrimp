@@ -34,11 +34,11 @@ impl plugin::PluginExecImplementation for Settings {
 
         for target in targets {
             let raw = utils::sysctl::get_string(target).unwrap_or_else(|_| {
-                println!("error: cannot read sysctl key '{}'", target);
+                eprintln!("error: cannot read sysctl key '{}'", target);
                 exit(1);
             });
             let raw_int: i64 = raw.parse().unwrap_or_else(|_| {
-                println!("error: cannot parse sysctl key '{}' as integer", raw);
+                eprintln!("error: cannot parse sysctl key '{}' as integer", raw);
                 exit(1);
             });
             let result = (raw_int as f64) * factor;
