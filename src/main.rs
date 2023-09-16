@@ -25,10 +25,11 @@ fn main() {
     };
 
     // load/parse the config
-    let config = config::config(&config_path).unwrap_or_else(|_| {
+    let config = config::config(&config_path).unwrap_or_else(|e| {
         println!(
-            "error: cannot load configuration file '{}'",
-            config_path.display()
+            "error: cannot load configuration file '{}': {}",
+            config_path.display(),
+            e
         );
         exit(1);
     });
