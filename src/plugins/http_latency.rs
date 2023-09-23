@@ -9,7 +9,7 @@ use crate::plugin;
 #[derive(Debug, Clone, Deserialize)]
 pub struct Settings {
     /// The text that is expected, otherwise returns -2
-    pub expected: Option<String>,
+    pub expect: Option<String>,
 
     /// Maximum time for the query, otherwise returns the configured timeout value.
     pub timeout: Option<f32>,
@@ -29,7 +29,7 @@ pub struct State {
 impl plugin::State<Settings> for State {
     fn new(_instance: &str, conf: &PluginConfig<Settings>, _targets: &[String]) -> Self {
         let settings = conf.settings.to_owned().unwrap_or(Settings {
-            expected: None,
+            expect: None,
             timeout: None,
             user_agent: None,
         });
@@ -43,7 +43,7 @@ impl plugin::State<Settings> for State {
         }
 
         let result_fn: fn(ureq::Response, &State, time::Duration) -> String =
-            if settings.expected.is_some() {
+            if settings.expect.is_some() {
                 |response, state, duration| {
                     if let Ok(response_str) = response.into_string() {
                         if response_str.trim() == state.expected.as_ref().unwrap() {
@@ -61,7 +61,7 @@ impl plugin::State<Settings> for State {
 
         Self {
             agent: builder.build(),
-            expected: settings.expected.to_owned(),
+            expected: settings.expect.to_owned(),
             timeout: timeout_value,
             result_fn,
         }
