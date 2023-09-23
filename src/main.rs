@@ -39,7 +39,8 @@ fn main() {
     {
         (Ok(hostname), Ok(interval)) => (hostname, interval),
         _ => {
-            eprintln!("
+            eprintln!(
+                "
             error: cannot read env variable COLLECTD_HOSTNAME and COLLECTD_INTERVAL
                    these should be set either by collectd or by yourself if testing the probe"
             );

@@ -33,6 +33,9 @@ pub struct Config {
 
     #[cfg(feature = "file_factor")]
     pub file_factor: Plugin<plugins::file_factor::Settings>,
+
+    #[cfg(feature = "http_latency")]
+    pub http_latency: Plugin<plugins::http_latency::Settings>,
 }
 
 /**
