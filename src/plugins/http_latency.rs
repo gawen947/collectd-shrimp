@@ -41,7 +41,7 @@ impl plugin::State<Settings> for State {
             if settings.expected.is_some() {
                 |response, state, duration| {
                     if let Ok(response_str) = response.into_string() {
-                        if &response_str == state.expected.as_ref().unwrap() {
+                        if response_str.trim() == state.expected.as_ref().unwrap() {
                             duration.as_secs_f32().to_string()
                         } else {
                             "-2".to_owned() // unexpected response
