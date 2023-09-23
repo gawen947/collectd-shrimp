@@ -12,12 +12,7 @@ pub struct Settings {
 impl plugin::PluginExecImplementation for Settings {
     type PluginState = plugin::EmptyState;
 
-    fn pre(
-        instance: &str,
-        conf: &PluginConfig<Self>,
-        _state: &mut Self::PluginState,
-        targets: &[String],
-    ) {
+    fn pre(instance: &str, conf: &PluginConfig<Self>, targets: &[String]) {
         conf.check_setting_required(instance);
         conf.check_target_required(instance, targets);
     }

@@ -39,13 +39,8 @@ coupled to the type of data you want to measure rather than the type of measurem
 pub trait PluginExecImplementation: Sized {
     type PluginState: State<Self>;
 
-    /// Executed before any execution to check the configuration and eventually initialize stuff.
-    fn pre(
-        instance: &str,
-        conf: &PluginConfig<Self>,
-        state: &mut Self::PluginState,
-        targets: &[String],
-    );
+    /// Executed at the start of the program before any execution to check the configuration and eventually initialize stuff.
+    fn pre(instance: &str, conf: &PluginConfig<Self>, targets: &[String]);
 
     /// Execute an instance of the plugin and return the results for each type-instance.
     fn exec<'a>(
@@ -131,8 +126,8 @@ where
         let type_name = &plugin_config.r#type;
         let putval_base_str = format!("PUTVAL {hostname}/{plugin_name}-{instance}/{type_name}");
 
-        let mut state = T::PluginState::new(&instance, &plugin_config, &targets);
-        T::pre(&instance, &plugin_config, &mut state, &targets);
+        T::pre(&instance, &plugin_config, &targets);
+        let state = T::PluginState::new(&instance, &plugin_config, &targets);
 
         Self {
             config: plugin_config,

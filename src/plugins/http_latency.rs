@@ -61,12 +61,7 @@ impl plugin::State<Settings> for State {
 impl plugin::PluginExecImplementation for Settings {
     type PluginState = State;
 
-    fn pre(
-        instance: &str,
-        conf: &PluginConfig<Self>,
-        _state: &mut Self::PluginState,
-        targets: &[String],
-    ) {
+    fn pre(instance: &str, conf: &PluginConfig<Self>, targets: &[String]) {
         conf.check_setting_required(instance);
         conf.check_target_required(instance, targets);
     }
