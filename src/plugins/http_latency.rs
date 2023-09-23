@@ -13,6 +13,9 @@ pub struct Settings {
 
     /// Maximum time for the query, otherwise returns the configured timeout value.
     pub timeout: Option<f32>,
+
+    /// User agent to use for the query.
+    pub user_agent: Option<String>,
 }
 
 #[derive(Debug, Clone)]
@@ -25,13 +28,15 @@ pub struct State {
 
 impl plugin::State<Settings> for State {
     fn new(_instance: &str, conf: &PluginConfig<Settings>, _targets: &[String]) -> Self {
-        let settings = conf
-            .settings
-            .to_owned()
-            .unwrap_or(Settings { expected: None, timeout: None });
+        let settings = conf.settings.to_owned().unwrap_or(Settings {
+            expected: None,
+            timeout: None,
+            user_agent: None,
+        });
 
         let mut timeout_value: f32 = f32::INFINITY;
-        let mut builder = ureq::AgentBuilder::new();
+        let mut builder = ureq::AgentBuilder::new()
+            .user_agent(&settings.user_agent.unwrap_or("collectd-shrimp".to_owned()));
         if let Some(timeout) = settings.timeout {
             builder = builder.timeout(time::Duration::from_secs_f32(timeout));
             timeout_value = timeout;
