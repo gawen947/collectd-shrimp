@@ -18,13 +18,17 @@ pub struct Settings {
 #[derive(Debug, Clone)]
 pub struct State {
     agent: ureq::Agent,
+    expected: Option<String>,
     timeout: f32,
-    result_fn: fn(ureq::Response, &Settings, time::Duration) -> String,
+    result_fn: fn(ureq::Response, &State, time::Duration) -> String,
 }
 
 impl plugin::State<Settings> for State {
     fn new(_instance: &str, conf: &PluginConfig<Settings>, _targets: &[String]) -> Self {
-        let settings = conf.settings.as_ref().unwrap();
+        let settings = conf
+            .settings
+            .to_owned()
+            .unwrap_or(Settings { expected: None, timeout: None });
 
         let mut timeout_value: f32 = f32::INFINITY;
         let mut builder = ureq::AgentBuilder::new();
@@ -33,11 +37,11 @@ impl plugin::State<Settings> for State {
             timeout_value = timeout;
         }
 
-        let result_fn: fn(ureq::Response, &Settings, time::Duration) -> String =
+        let result_fn: fn(ureq::Response, &State, time::Duration) -> String =
             if settings.expected.is_some() {
-                |response, settings, duration| {
+                |response, state, duration| {
                     if let Ok(response_str) = response.into_string() {
-                        if &response_str == settings.expected.as_ref().unwrap() {
+                        if &response_str == state.expected.as_ref().unwrap() {
                             duration.as_secs_f32().to_string()
                         } else {
                             "-2".to_owned() // unexpected response
@@ -52,6 +56,7 @@ impl plugin::State<Settings> for State {
 
         Self {
             agent: builder.build(),
+            expected: settings.expected.to_owned(),
             timeout: timeout_value,
             result_fn,
         }
@@ -62,21 +67,18 @@ impl plugin::PluginExecImplementation for Settings {
     type PluginState = State;
 
     fn pre(instance: &str, conf: &PluginConfig<Self>, targets: &[String]) {
-        conf.check_setting_required(instance);
         conf.check_target_required(instance, targets);
     }
 
     fn exec<'a>(
         _instance: &str,
-        conf: &PluginConfig<Self>,
+        _conf: &PluginConfig<Self>,
         state: &mut Self::PluginState,
         targets: &'a [String],
     ) -> Vec<plugin::PluginResult<'a>> {
         let mut results: Vec<plugin::PluginResult> = Vec::with_capacity(targets.len());
 
         for target in targets {
-            let settings = conf.settings.as_ref().unwrap();
-
             // fetch the target
             let measurement_time = plugin::now();
             let start = time::Instant::now();
@@ -88,7 +90,7 @@ impl plugin::PluginExecImplementation for Settings {
                 state.timeout.to_string()
             } else {
                 match call_response {
-                    Ok(response) => (state.result_fn)(response, settings, duration),
+                    Ok(response) => (state.result_fn)(response, state, duration),
                     Err(err) => match err {
                         Error::Status(code, _) => (-(code as i32)).to_string(),
                         Error::Transport(_) => "-1".to_owned(), // transport error
