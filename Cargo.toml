@@ -21,3 +21,7 @@ sysctl_temp = ["sysctl"]
 file = []
 file_factor = []
 http_latency = ["dep:ureq"]
+
+[profile.release]
+strip = true
+lto = true
