@@ -17,3 +17,6 @@ pub mod file_factor;
 
 #[cfg(feature = "http_latency")]
 pub mod http_latency;
+
+#[cfg(feature = "telnet_latency")]
+pub mod telnet_latency;

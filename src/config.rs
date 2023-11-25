@@ -36,6 +36,10 @@ pub struct Config {
 
     #[cfg(feature = "http_latency")]
     pub http_latency: Plugin<plugins::http_latency::Settings>,
+
+
+    #[cfg(feature = "telnet_latency")]
+    pub telnet_latency: Plugin<plugins::telnet_latency::Settings>,
 }
 
 /**

@@ -21,6 +21,7 @@ sysctl_temp = ["sysctl"]
 file = []
 file_factor = []
 http_latency = ["dep:ureq"]
+telnet_latency = []
 
 [profile.release]
 strip = true
