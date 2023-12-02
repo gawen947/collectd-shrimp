@@ -36,7 +36,8 @@ impl plugin::State<Settings> for State {
             timeout: None,
         });
 
-        let timeout_value: f32 = settings.timeout.unwrap_or(f32::INFINITY);
+        // default timeout cannot be infinity, so we set it up to a large enough value
+        let timeout_value: f32 = settings.timeout.unwrap_or(600.0);
         let read_fn = match settings.expect {
             Some(_) => read_expected,
             None => read_onebyte
