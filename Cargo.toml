@@ -5,11 +5,11 @@ readme = "README.md"
 authors = ["David Hauweele <david@hauweele.net>"]
 license = "BSD-3-Clause"
 repository = "https://github.com/gawen947/collectd-shrimp.git"
-version = "0.1.13"
+version = "0.1.14"
 edition = "2021"
 
 [dependencies]
-serde = { version = "1.0.183", features = ["derive"] }
+serde = { version = "1.0.193", features = ["derive"] }
 sysctl = { version = "0.5.4", optional = true }
 toml = "0.7.6"
 ureq = { version = "2.7.1", optional = true }
